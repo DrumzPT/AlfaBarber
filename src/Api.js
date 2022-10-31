@@ -4,6 +4,22 @@ import {
   signInWithEmailAndPassword,
   updateProfile
 } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAldVS063ATeVDSDsC3hV8Ddw2Wz5WQC4s",
+  authDomain: "alfabarber-a0012.firebaseapp.com",
+  projectId: "alfabarber-a0012",
+  storageBucket: "alfabarber-a0012.appspot.com",
+  messagingSenderId: "199621609370",
+  appId: "1:199621609370:web:b59d05975d23aa57119c23",
+  measurementId: "G-QYHNV5X1ER"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export default {
   signUp: async (email,password) => {
@@ -40,6 +56,17 @@ export default {
     const auth = getAuth();
     console.log(auth.currentUser)
     updateProfile(auth.currentUser, {displayName: userName})
+  },
+  getBarbers: async () => {
+    let response
+    await getDocs(collection(db, "barbeiros"))
+    .then((querySnapshot)=>{
+      response = {success: true, result: querySnapshot}
+    })
+    .catch((error)=>{
+      response = {success: false, errorMessage: error}
+    })
+    return response
   }
 }
 

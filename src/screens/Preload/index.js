@@ -1,4 +1,5 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useContext} from "react";
+import { UserContext } from "../../contexts/UserContext";
 import { Image } from "react-native";
 import { Container, LoadingIcon } from "./styles";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +10,20 @@ import Api from "../../Api";
 export default () => {
 
   const navigation = useNavigation();
+  const { dispatch: userDispatch } = useContext(UserContext)
+
+  const saveUserInfoAndRedirectToDashboard = (user) => {
+    console.log("dentro do redirect")
+    
+    userDispatch({
+      type: 'setName',
+      payload: user.displayName
+    })
+
+    navigation.reset({
+      routes:[{name:'MainTab'}]
+    })
+  }
 
   useEffect(()=>{
     const checkLoggedUser =  async() => {
@@ -18,16 +33,21 @@ export default () => {
 
       if (user) {
         console.log("User is signed in")
+        saveUserInfoAndRedirectToDashboard(user)
       } else {
         console.log("User is signed out")
         const email = await AsyncStorage.getItem('email');
         const password = await AsyncStorage.getItem('password');
-        if(email && password){
-          result = Api.signIn(email, password)
+       
+        if(email !== undefined && password !== undefined){
+          result = await Api.signIn(email, password)
+          console.log(result)
           if(result.success){
-            //dashboard
+            saveUserInfoAndRedirectToDashboard(result.user)
           }else{
             navigation.navigate("SignIn")
+            AsyncStorage.removeItem("email")
+            AsyncStorage.removeItem('password');
           }
         }else{
           navigation.navigate("SignIn")

@@ -41,6 +41,10 @@ export default () => {
           type: 'setName',
           payload: response.user.displayName
         })
+
+        navigation.reset({
+          routes:[{name:'MainTab'}]
+        })
       }else{
         alert(response.errorMessage)
       }
