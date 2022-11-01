@@ -19,12 +19,12 @@ const Input = styled.TextInput`
   margin-left: 10px;
 `;
 
-export default ({IconSvg, placeholder, value, onChangeText, isPassword }) => {
+export default ({IconSvg, placeHolder, value, onChangeText, isPassword }) => {
   return (
     <InputArea>
       <IconSvg width="24" height="24" fill="#dddddd"/>
       <Input 
-        placeholder={placeholder}
+        placeholder={placeHolder}
         placeholderTextColor={"#dddddd"}
         value={value}
         onChangeText={onChangeText}
