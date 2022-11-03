@@ -12,6 +12,7 @@ export default () => {
   const getBarbers = async () => {
     setLoading(true)
     setBarbers([])
+
     let response = await Api.getBarbers()
 
     if(response.success){
@@ -37,7 +38,6 @@ export default () => {
   
   return(
     <Container>
-    {console.log("dentro do render", barbers)}
       <Scroller>
         <HeaderArea>
           <HeaderTitle >

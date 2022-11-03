@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Api from '../Api'
 import styled from 'styled-components/native'
 
 const Area = styled.TouchableOpacity`
@@ -41,9 +42,21 @@ const SelectBarberButtonText = styled.Text`
 `
 
 export default (({data}) => {
+
+  const [picUrl, setPicUrl] = useState('')
+
+  const getPicUrl = async () => {
+    const url = await Api.getBarberPic(data.foto)
+    setPicUrl(url.result)
+  }
+
+  useEffect(() => {
+    getPicUrl()
+  }, [])
+
   return (
     <Area>
-      <Avatar source={{uri: data.foto}} />
+      {picUrl !== '' ? <Avatar source={{uri: picUrl}}/> : <Avatar />}
       <InfoArea>
         <UserName>{data.name}</UserName>
 

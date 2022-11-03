@@ -7,6 +7,7 @@ import {
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from "firebase/firestore";
 import { collection, getDocs } from "firebase/firestore";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAldVS063ATeVDSDsC3hV8Ddw2Wz5WQC4s",
@@ -20,6 +21,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 export default {
   signUp: async (email,password) => {
@@ -59,6 +61,7 @@ export default {
   },
   getBarbers: async () => {
     let response
+    //Barbers foto should be the name of the image thats in the cloud
     await getDocs(collection(db, "barbeiros"))
     .then((querySnapshot)=>{
       response = {success: true, result: querySnapshot}
@@ -66,6 +69,18 @@ export default {
     .catch((error)=>{
       response = {success: false, errorMessage: error}
     })
+    return response
+  },
+  getBarberPic: async (picName) => {
+    let response
+    await getDownloadURL(ref(storage, picName))
+      .then((url) => {
+        response = {success: true, result: url}
+        console.log(url)
+      } )
+      .catch((error)=>{
+        response = {success: false, errorMessage: error}
+      })
     return response
   }
 }
