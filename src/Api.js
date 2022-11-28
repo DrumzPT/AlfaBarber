@@ -2,6 +2,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
   updateProfile
 } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
@@ -52,6 +53,19 @@ export default {
       console.log(error.code)
       response = {success: false, errorMessage: handleFirebaseErrorMessages(error.code)}
     });
+    return response
+  },
+  signOff: async () => {
+    const auth = getAuth();
+    let response
+    await signOut(auth)
+    .then(()=>{
+      console.log("sucesso")
+      response= {success:true}
+    })
+    .catch((error) => {
+      response= {success:false, errorMessage: error}
+    })
     return response
   },
   updateUser: async (userName) => {

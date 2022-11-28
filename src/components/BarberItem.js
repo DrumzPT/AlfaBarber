@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Api from '../Api'
 import styled from 'styled-components/native'
+import { useNavigation } from '@react-navigation/native'
 
 const Area = styled.TouchableOpacity`
   background-color: #777777;
@@ -42,6 +43,7 @@ const SelectBarberButtonText = styled.Text`
 `
 
 export default (({data}) => {
+  const navigation = useNavigation()
 
   const [picUrl, setPicUrl] = useState('')
 
@@ -54,8 +56,16 @@ export default (({data}) => {
     getPicUrl()
   }, [])
 
+  const handleClick = () => {
+    navigation.navigate('Barber', {
+      id: data.id,
+      avatar: picUrl,
+      name: data.name
+    })
+  }
+
   return (
-    <Area>
+    <Area onPress={handleClick}>
       {picUrl !== '' ? <Avatar source={{uri: picUrl}}/> : <Avatar />}
       <InfoArea>
         <UserName>{data.name}</UserName>

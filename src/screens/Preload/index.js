@@ -45,12 +45,16 @@ export default () => {
           if(result.success){
             saveUserInfoAndRedirectToDashboard(result.user)
           }else{
-            navigation.navigate("SignIn")
+            navigation.reset({
+              routes:[{name:'SignIn'}]
+            })
             AsyncStorage.removeItem("email")
             AsyncStorage.removeItem('password');
           }
         }else{
-          navigation.navigate("SignIn")
+          navigation.reset({
+            routes:[{name:'SignIn'}]
+          })
         }
       }
     }
