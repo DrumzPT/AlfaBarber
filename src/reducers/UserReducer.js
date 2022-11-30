@@ -5,10 +5,10 @@ export const initialState = {
 }
 
 export const UserReducer = (state, action) => {
+  console.log(action.paylod)
   switch(action.type){
     case 'setName':
       return {...state, name: action.payload.name};
-      break;
     default:
       return state;
   }

@@ -40,7 +40,7 @@ export default () => {
 
         userDispatch({
           type: 'setName',
-          payload: response.user.displayName
+          payload: nameField
         })
 
         navigation.reset({

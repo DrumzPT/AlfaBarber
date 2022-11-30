@@ -38,7 +38,9 @@ export default () => {
         console.log("User is signed out")
         const email = await AsyncStorage.getItem('email');
         const password = await AsyncStorage.getItem('password');
-       
+        
+        console.log(email)
+        console.log(password)
         if(email !== undefined && password !== undefined){
           result = await Api.signIn(email, password)
           console.log(result)
