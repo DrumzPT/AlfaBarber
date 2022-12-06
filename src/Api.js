@@ -7,7 +7,7 @@ import {
 } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from "firebase/firestore";
-import { collection, getDocs, getDoc, doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, setDoc, FieldPath } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { weekdaysSchedule } from './const/index'
 
@@ -104,7 +104,7 @@ export default {
     })
     return response
   },
-  getBarberAvailability: async (uid, date="10-12-2022") => {
+  getBarberAvailability: async (uid, date) => {
     let response
     await getDoc(doc (db, "barbeiros", uid, "bookings", date))
     .then(async (docSnapshot)=>{
@@ -123,7 +123,7 @@ export default {
       response = {success: false, errorMessage: error}
     })
     return response
-  }
+  },
 }
 
 const isAllowedToCreateAvailableBooking = () => {
