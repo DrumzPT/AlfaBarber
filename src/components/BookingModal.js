@@ -131,6 +131,20 @@ const DateItemNumber = styled.Text`
   font-weight: bold;
 `;
 
+const TimeList = styled.ScrollView``
+
+const TimeItem = styled.TouchableOpacity`
+  width: 75px;
+  height: 40px;
+  justify-content: center;
+  align-items: center ;
+  border-radius: 10px;
+`
+
+const TimeItemText = styled.Text`
+  font-size: 16px;
+`
+
 const months = [
   'Janeiro',
   'Fevereiro',
@@ -181,8 +195,10 @@ export default ({show, setShowModal, barber, service}) => {
       if(response.result === "created"){
         setListHours(weekdaysSchedule)
       }else{
-        setListHours("data:", response.result.data().hours)
+        setListHours(response.result.data().hours)
       }
+    }else{
+      alert("Ocorreu um erro ao obter horas disponíveis, por favor tente mais tarde e caso o erro persista contacte-nos")
     }
   }
 
@@ -190,6 +206,10 @@ export default ({show, setShowModal, barber, service}) => {
     if(selectedDay !== 0)
       getBarberAvailability()
   }, [selectedDay, selectedMonth])
+
+  useEffect(()=> {
+    setSelectedHour(null)
+  }, [selectedDay])
 
   useEffect(()=> {
     let daysInMonth = new Date(selectedYear, selectedMonth +1, 0).getDate();
@@ -205,7 +225,7 @@ export default ({show, setShowModal, barber, service}) => {
     }
 
     setListDays(newListDays)
-    setSelectedDay(new Date().getDate());
+    setSelectedDay(0);
     setListHours([]);
     setSelectedHour(0);
   }, [selectedMonth, selectedYear])
@@ -221,7 +241,7 @@ export default ({show, setShowModal, barber, service}) => {
     mountDate.setMonth(mountDate.getMonth() -1)
     setSelectedYear( mountDate.getFullYear())
     setSelectedMonth( mountDate.getMonth())
-    setSelectedDay(1);
+    setSelectedDay(0);
   }
 
   const handleRightDateClick = () => {
@@ -229,7 +249,7 @@ export default ({show, setShowModal, barber, service}) => {
     mountDate.setMonth(mountDate.getMonth() + 1)
     setSelectedYear( mountDate.getFullYear())
     setSelectedMonth( mountDate.getMonth())
-    setSelectedDay(1);
+    setSelectedDay(0);
   }
 
   const handleFinishClick = () => {
@@ -290,13 +310,44 @@ export default ({show, setShowModal, barber, service}) => {
                     backgroundColor: item.number === selectedDay ? '#4EADBE' : '#FFFFFF'
                   }}
                 >
-                  <DateItemWeekDay>{item.weekday}</DateItemWeekDay>
-                  <DateItemNumber>{item.number}</DateItemNumber>
+                  <DateItemWeekDay
+                    style={{
+                      color: item.number === selectedDay ? '#FFFFFF' : '#000000'
+                    }}
+                  >{item.weekday}</DateItemWeekDay>
+                  <DateItemNumber
+                    style={{
+                        color: item.number === selectedDay ? '#FFFFFF' : '#000000'
+                      }}
+                  >{item.number}</DateItemNumber>
                 </DateItem>
               ))}
             </DateList>
           </ModalItem>
-
+          
+          {listHours.length > 0 && 
+            <ModalItem>
+            {console.log(listHours)}
+              <TimeList horizontal = {true} showsHorizontalScrollIndication={false}>
+                {listHours.map((item, key)=>(
+                  <TimeItem
+                    key={key}
+                    onPress={()=>setSelectedHour(item)}
+                    style={{
+                      backgroundColor: item === selectedHour ? '#4EADBE' : '#FFFFFF'
+                    }}
+                  >
+                    <TimeItemText
+                      style={{
+                        color: item.number === selectedHour ? '#FFFFFF' : '#000000',
+                        fontWeight: item === selectedHour ? 'bold' : 'normal'
+                      }}
+                    >{item}</TimeItemText>
+                  </TimeItem>
+                ))}
+              </TimeList>
+            </ModalItem>
+          }
           <FinishButton onPress={handleFinishClick}>
             <FinishButtonText>
               Finalizar Agendamento
