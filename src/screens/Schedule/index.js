@@ -18,7 +18,7 @@ export default () => {
     if(response.success){
       let fetchedBarbers = []
       response.result.forEach((doc) => {
-        fetchedBarbers.push(doc.data())
+        fetchedBarbers.push({id: doc.id, data: doc.data()})
       })
       if(fetchedBarbers.length === 0){
         alert("Erro ao obter barbeiros, por favor tente mais tarde, se o erro permanecer contacte-nos")
@@ -54,7 +54,7 @@ export default () => {
         }
         <ListArea>
           {barbers.map((item, k) => (
-            <BarberItem key={k} data={item}/>
+            <BarberItem key={k} BarberSnapshot={item}/>
           ))}
         </ListArea>
       </Scroller>

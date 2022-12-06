@@ -23,18 +23,18 @@ export const PageBody = styled.View`
   min-height: 400px ;
 `
 
-export const UserInfo = styled.View`
+export const BarberInfo = styled.View`
   margin-top: 40px;
   flex: 1;
 `
 
 
-export const UserInfoArea = styled.View`
+export const BarberInfoArea = styled.View`
   flex-direction: row;
   margin-top: -20px;
 `
 
-export const UserAvatar = styled.Image`
+export const BarberAvatar = styled.Image`
   width: 110px;
   height: 110px;
   border-radius: 20px;
@@ -44,22 +44,60 @@ export const UserAvatar = styled.Image`
   border-color: #FFF;
 `
 
-export const UserInfoName = styled.Text`
+export const BarberInfoName = styled.Text`
   color: #000000;
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px
 `
 
-export const ServiceArea = styled.View``
-
 export const BackButton = styled.TouchableOpacity`
   position: absolute;
-  left: 0;
-  top: 30;
+  left: 0px;
+  top: 30px;
   z-index: 9;
 `
-// Scroller,
-// PageBody,
-// UserInfoArea,
-// ServiceArea
+export const ServicesArea = styled.View`
+  margin-top: 30px;
+`
+
+export const ServicesTitle = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 30px;
+  margin-bottom: 20px;
+`
+
+export const ServiceItem = styled.View`
+  flex-direction: row;
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+`
+
+export const ServiceInfo = styled.View`
+  flex: 1;
+`
+
+export const ServiceName = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000
+`
+
+export const ServicePrice = styled.Text`
+  font-size: 14px;
+  color: #000000
+`
+
+export const ServiceChooseButton = styled.TouchableOpacity`
+  border-radius: 10px;
+  background-color: #4EADBE;
+  padding: 10px 15px;
+`
+
+export const ServiceChooseBtnText = styled.Text`
+  font-size: 14px;
+  font-weight: bold;
+  color: #FFF
+`

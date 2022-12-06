@@ -7,8 +7,9 @@ import {
 } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from "firebase/firestore";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { weekdaysSchedule } from './const/index'
 
 const firebaseConfig = {
   apiKey: "AIzaSyAldVS063ATeVDSDsC3hV8Ddw2Wz5WQC4s",
@@ -35,7 +36,6 @@ export default {
       response = {success: true, user: user}
     })
     .catch((error) => {
-      console.log(error.code)
       response = {success: false, errorMessage: handleFirebaseErrorMessages(error.code)}
     });
     return response
@@ -50,7 +50,6 @@ export default {
       response = {success: true, user: user}
     })
     .catch((error) => {
-      console.log(error.code)
       response = {success: false, errorMessage: handleFirebaseErrorMessages(error.code)}
     });
     return response
@@ -60,7 +59,6 @@ export default {
     let response
     await signOut(auth)
     .then(()=>{
-      console.log("sucesso")
       response= {success:true}
     })
     .catch((error) => {
@@ -70,7 +68,6 @@ export default {
   },
   updateUser: async (userName) => {
     const auth = getAuth();
-    console.log(auth.currentUser)
     updateProfile(auth.currentUser, {displayName: userName})
   },
   getBarbers: async () => {
@@ -90,15 +87,55 @@ export default {
     await getDownloadURL(ref(storage, picName))
       .then((url) => {
         response = {success: true, result: url}
-        console.log(url)
       } )
       .catch((error)=>{
         response = {success: false, errorMessage: error}
       })
     return response
+  },
+  getServices: async () => {
+    let response
+    await getDocs(collection(db, "servicos"))
+    .then((querySnapshot)=>{
+      response = {success: true, result: querySnapshot}
+    })
+    .catch((error)=>{
+      response = {success: false, errorMessage: error}
+    })
+    return response
+  },
+  getBarberAvailability: async (uid, date="10-12-2022") => {
+    let response
+    await getDoc(doc (db, "barbeiros", uid, "bookings", date))
+    .then(async (docSnapshot)=>{
+      console.log(docSnapshot.exists())
+      if(docSnapshot.exists()){
+        response = {success: true, result: docSnapshot}
+      }else{
+        if(isAllowedToCreateAvailableBooking){
+          createAvailableBooking(uid, date)
+          response = {success: true, result: "created"}
+        }
+      }
+      
+    })
+    .catch((error)=>{
+      response = {success: false, errorMessage: error}
+    })
+    return response
   }
 }
 
+const isAllowedToCreateAvailableBooking = () => {
+  //TODO Feriados, Ferias, Fins de Semana?
+  return true
+}
+
+const createAvailableBooking = async (uid, date) => {
+  await setDoc(doc (db, "barbeiros", uid, "bookings", date),{
+    hours: weekdaysSchedule
+  })
+}
 
 const handleFirebaseErrorMessages = (errorCode) => {
   switch(errorCode) {

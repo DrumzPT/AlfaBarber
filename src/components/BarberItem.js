@@ -42,13 +42,13 @@ const SelectBarberButtonText = styled.Text`
   color: #ffffff;
 `
 
-export default (({data}) => {
+export default (({BarberSnapshot}) => {
   const navigation = useNavigation()
 
   const [picUrl, setPicUrl] = useState('')
 
   const getPicUrl = async () => {
-    const url = await Api.getBarberPic(data.foto)
+    const url = await Api.getBarberPic(BarberSnapshot.data.foto)
     setPicUrl(url.result)
   }
 
@@ -58,9 +58,9 @@ export default (({data}) => {
 
   const handleClick = () => {
     navigation.navigate('Barber', {
-      id: data.id,
+      id: BarberSnapshot.id,
       avatar: picUrl,
-      name: data.name
+      name: BarberSnapshot.data.name
     })
   }
 
@@ -68,7 +68,7 @@ export default (({data}) => {
     <Area onPress={handleClick}>
       {picUrl !== '' ? <Avatar source={{uri: picUrl}}/> : <Avatar />}
       <InfoArea>
-        <UserName>{data.name}</UserName>
+        <UserName>{BarberSnapshot.data.name}</UserName>
 
         <SelectBarberButton>
           <SelectBarberButtonText>

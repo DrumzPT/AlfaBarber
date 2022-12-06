@@ -13,8 +13,6 @@ export default () => {
   const { dispatch: userDispatch } = useContext(UserContext)
 
   const saveUserInfoAndRedirectToDashboard = (user) => {
-    console.log("dentro do redirect")
-    
     userDispatch({
       type: 'setName',
       payload: user.displayName
@@ -32,18 +30,13 @@ export default () => {
       const user = auth.currentUser;
 
       if (user) {
-        console.log("User is signed in")
         saveUserInfoAndRedirectToDashboard(user)
       } else {
-        console.log("User is signed out")
         const email = await AsyncStorage.getItem('email');
         const password = await AsyncStorage.getItem('password');
         
-        console.log(email)
-        console.log(password)
         if(email !== undefined && password !== undefined){
           result = await Api.signIn(email, password)
-          console.log(result)
           if(result.success){
             saveUserInfoAndRedirectToDashboard(result.user)
           }else{

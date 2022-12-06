@@ -31,7 +31,6 @@ export default () => {
     if(emailField != '' && passwordField != ''){
       let response = await Api.signIn(emailField, passwordField)
 
-      console.log(response)
       if(response.success){
         alert("Login efectuado com sucesso")
         await AsyncStorage.setItem('password', passwordField)
@@ -54,7 +53,6 @@ export default () => {
   }
 
   const handleSignUpMessageClick = () => {
-    console.log("cliquei no sign up")
     navigation.reset({
       routes: [{name: 'SignUp'}]
     })

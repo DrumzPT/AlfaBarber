@@ -10,9 +10,7 @@ export default () => {
 
   const handleLogoutClick = async () => {
     let result = await Api.signOff()
-    console.log("result", result)
     if(result.success){
-      console.log("cá dentro")
       AsyncStorage.removeItem("email")
       AsyncStorage.removeItem('password');
       navigation.reset({routes:[{name:'SignIn'}]})

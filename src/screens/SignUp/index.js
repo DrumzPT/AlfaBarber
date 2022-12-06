@@ -55,7 +55,6 @@ export default () => {
   }
 
   const handleSignUpMessageClick = () => {
-    console.log("cliquei no sign in")
     navigation.reset({
       routes: [{name: 'SignIn'}]
     })
