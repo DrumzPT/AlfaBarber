@@ -7,7 +7,16 @@ import {
 } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from "firebase/firestore";
-import { collection, getDocs, getDoc, doc, setDoc, FieldPath } from "firebase/firestore";
+import { 
+  collection,
+  getDocs, 
+  getDoc, 
+  doc, 
+  setDoc, 
+  arrayUnion,
+  arrayRemove, 
+  updateDoc
+} from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { weekdaysSchedule } from './const/index'
 
@@ -108,7 +117,6 @@ export default {
     let response
     await getDoc(doc (db, "barbeiros", uid, "bookings", date))
     .then(async (docSnapshot)=>{
-      console.log(docSnapshot.exists())
       if(docSnapshot.exists()){
         response = {success: true, result: docSnapshot}
       }else{
@@ -124,6 +132,50 @@ export default {
     })
     return response
   },
+  removeBarberAvailability: async (uid, year, month, day, hoursToRemove)=>{
+    let response
+    console.log("ref =", `barbeiros/${uid}/bookings/${year}-${month}-${day}`)
+    const ref = doc(db, `barbeiros/${uid}/bookings/${year}-${month}-${day}`)
+    await getDoc(ref)
+    .then((docSnapshot)=>{
+      console.log("existe", docSnapshot.exists())
+      if(docSnapshot.exists()){
+        updateDoc(ref, {
+          hours: arrayRemove(...hoursToRemove)
+        })
+        response = {success: true}
+      }else{
+        response = {success: false, result: "not possible to book"}
+      }
+    })
+    .catch((error)=>{
+      response = {success: false, errorMessage: error}
+    })
+    return response
+  },
+  setUserReservation: async (email, service, barberName, year, month, day, hour) => {
+    const serviceInfo =  {
+      barberName: barberName,
+      hour: hour,
+      serviceName: service.name,
+      servicePrice: service.price,
+      hour: hour
+      }
+    const ref = doc(db, `userBookings/${email}/${year}-${month}/${day}`)
+    console.log("Ref: ", `userBookings/${email}/${year}-${month}/${day}`)
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      if(docSnapshot.exists()){
+        updateDoc(ref, {
+          services: arrayUnion(serviceInfo)
+        })
+      }else{
+        await setDoc(doc(db, `userBookings/${email}/${year}-${month}/${day}`), {
+          services: [serviceInfo]
+        })
+      }
+    })
+  }
 }
 
 const isAllowedToCreateAvailableBooking = () => {

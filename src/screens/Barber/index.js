@@ -40,7 +40,6 @@ export default () => {
   useEffect(()=> {
     const getServices = async () => {
       let response = await Api.getServices()
-      console.log(response)
 
       if(response.success){
         let fetchedServices = []
@@ -65,9 +64,6 @@ export default () => {
   }
 
   const handleServiceChoose = (item,key) => {
-    console.log("id do barbeiro", barberInfo.id)
-    console.log(key)
-    console.log(item)
     setSelectedService(key)
     setShowModal(true)
   }

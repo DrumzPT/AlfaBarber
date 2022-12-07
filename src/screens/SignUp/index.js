@@ -40,7 +40,10 @@ export default () => {
 
         userDispatch({
           type: 'setName',
-          payload: nameField
+          payload: {
+            name: user.nameField,
+            email: emailField
+          }
         })
 
         navigation.reset({

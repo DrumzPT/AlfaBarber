@@ -10,14 +10,17 @@ import Api from "../../Api";
 export default () => {
 
   const navigation = useNavigation();
-  const { dispatch: userDispatch } = useContext(UserContext)
+  const { state, dispatch: userDispatch } = useContext(UserContext)
 
   const saveUserInfoAndRedirectToDashboard = (user) => {
     userDispatch({
       type: 'setName',
-      payload: user.displayName
+      payload: {
+        name: user.displayName,
+        email: user.email
+      }
     })
-
+    
     navigation.reset({
       routes:[{name:'MainTab'}]
     })

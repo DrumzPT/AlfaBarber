@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useContext } from 'react'
 import Api from '../Api'
 import styled from 'styled-components/native'
 import { useNavigation } from '@react-navigation/native'
+import { UserContext } from "../contexts/UserContext"
 
 const Area = styled.TouchableOpacity`
   background-color: #777777;
@@ -43,6 +44,8 @@ const SelectBarberButtonText = styled.Text`
 `
 
 export default (({BarberSnapshot}) => {
+  const { state: userState } = useContext(UserContext)
+
   const navigation = useNavigation()
 
   const [picUrl, setPicUrl] = useState('')
