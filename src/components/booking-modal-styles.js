@@ -1,6 +1,8 @@
 import styled from 'styled-components/native'
 
-export const Modal = styled.Modal``
+export const Modal = styled.Modal`
+  padding: -10px
+`
 
 export const ModalArea = styled.View`
   flex: 1;

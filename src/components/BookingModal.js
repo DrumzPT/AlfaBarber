@@ -84,7 +84,13 @@ export default ({show, setShowModal, barber, service}) => {
         let response = await Api.removeBarberAvailability(
           barber.id, selectedYear,selectedMonth +1, selectedDay, listOfHoursToRemove
         )
-        // await Api.setUserReservation(state.email, barber.services[service], barber.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
+        if(response.success){
+          removeBookedHoursClientSide(listOfHoursToRemove)
+          await Api.setUserReservation(state.email, barber.services[service], barber.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
+        }
+        
+
+        
       }else{
         alert('Não é possível reservar pois não existe tempo o suficiente disponível para a hora requisitada \n' +
           'Por favor escolha outra hora'
@@ -92,6 +98,10 @@ export default ({show, setShowModal, barber, service}) => {
       }
      
     }
+  }
+
+  const removeBookedHoursClientSide = (listOfHoursToRemove) => {
+    setListHours(listHours.filter(hour => !listOfHoursToRemove.includes(hour)))
   }
 
   const getBarberAvailability = async () => {
@@ -190,12 +200,12 @@ export default ({show, setShowModal, barber, service}) => {
           </ModalItem>
           
           {service != null &&
-          <ModalItem>
-            <ServiceInfo>
-              <ServiceName>{barber.services[service].name}</ServiceName>
-              <ServicePrice>{barber.services[service].price}€</ServicePrice>
-            </ServiceInfo>
-          </ModalItem>
+            <ModalItem>
+              <ServiceInfo>
+                <ServiceName>{barber.services[service].name}</ServiceName>
+                <ServicePrice>{barber.services[service].price}€</ServicePrice>
+              </ServiceInfo>
+            </ModalItem>
           }
 
           <ModalItem>

@@ -41,7 +41,7 @@ export default () => {
         userDispatch({
           type: 'setName',
           payload: {
-            name: user.nameField,
+            name: nameField,
             email: emailField
           }
         })

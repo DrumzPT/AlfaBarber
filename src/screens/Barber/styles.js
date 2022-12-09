@@ -90,7 +90,13 @@ export const ServicePrice = styled.Text`
   color: #000000
 `
 
+export const ServiceTime = styled.Text`
+  font-size: 14px;
+  color: #000000
+`
+
 export const ServiceChooseButton = styled.TouchableOpacity`
+  justify-content: center;
   border-radius: 10px;
   background-color: #4EADBE;
   padding: 10px 15px;

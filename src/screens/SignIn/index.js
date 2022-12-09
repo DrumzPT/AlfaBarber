@@ -36,11 +36,14 @@ export default () => {
         await AsyncStorage.setItem('password', passwordField)
         await AsyncStorage.setItem('email', emailField)
 
+        console.log("user.response")
+        console.log(response.user)
+
         userDispatch({
           type: 'setName',
           payload: {
-            name: user.displayName,
-            email: user.email
+            name: response.user.displayName,
+            email: response.user.email
           }
         })
 

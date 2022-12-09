@@ -115,7 +115,7 @@ export default {
   },
   getBarberAvailability: async (uid, date) => {
     let response
-    await getDoc(doc (db, "barbeiros", uid, "bookings", date))
+    await getDoc(doc (db, "barbeiros", uid, "availableBookings", date))
     .then(async (docSnapshot)=>{
       if(docSnapshot.exists()){
         response = {success: true, result: docSnapshot}
@@ -134,8 +134,8 @@ export default {
   },
   removeBarberAvailability: async (uid, year, month, day, hoursToRemove)=>{
     let response
-    console.log("ref =", `barbeiros/${uid}/bookings/${year}-${month}-${day}`)
-    const ref = doc(db, `barbeiros/${uid}/bookings/${year}-${month}-${day}`)
+    console.log("ref =", `barbeiros/${uid}/availableBookings/${year}-${month}-${day}`)
+    const ref = doc(db, `barbeiros/${uid}/availableBookings/${year}-${month}-${day}`)
     await getDoc(ref)
     .then((docSnapshot)=>{
       console.log("existe", docSnapshot.exists())
@@ -184,7 +184,7 @@ const isAllowedToCreateAvailableBooking = () => {
 }
 
 const createAvailableBooking = async (uid, date) => {
-  await setDoc(doc (db, "barbeiros", uid, "bookings", date),{
+  await setDoc(doc (db, "barbeiros", uid, "availableBookings", date),{
     hours: weekdaysSchedule
   })
 }

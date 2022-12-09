@@ -17,6 +17,7 @@ import {
   ServiceInfo,
   ServiceName,
   ServicePrice,
+  ServiceTime,
   ServiceChooseButton,
   ServiceChooseBtnText
 } from './styles'
@@ -91,6 +92,7 @@ export default () => {
                 <ServiceInfo>
                   <ServiceName>{item.name}</ServiceName>
                   <ServicePrice>{item.price}€</ServicePrice>
+                  <ServiceTime>Duração: {30*item.timeBlocks} minutos</ServiceTime>
                 </ServiceInfo>
                 <ServiceChooseButton onPress={()=> handleServiceChoose(item, key)}>
                   <ServiceChooseBtnText>Agendar</ServiceChooseBtnText>
