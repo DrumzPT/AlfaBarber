@@ -159,10 +159,10 @@ export default {
       hour: hour,
       serviceName: service.name,
       servicePrice: service.price,
+      seriveTimeBlocks: service.timeBlocks,
       hour: hour
-      }
+    }
     const ref = doc(db, `userBookings/${email}/${year}-${month}/${day}`)
-    console.log("Ref: ", `userBookings/${email}/${year}-${month}/${day}`)
     await getDoc(ref)
     .then(async (docSnapshot)=>{
       if(docSnapshot.exists()){
@@ -171,6 +171,30 @@ export default {
         })
       }else{
         await setDoc(doc(db, `userBookings/${email}/${year}-${month}/${day}`), {
+          services: [serviceInfo]
+        })
+      }
+    })
+  },
+  setBarberReservation: async (barberId, service, clientName, year, month, day, hour) => {
+    const serviceInfo =  {
+      clientName: clientName,
+      hour: hour,
+      serviceName: service.name,
+      servicePrice: service.price,
+      seriveTimeBlocks: service.timeBlocks,
+      hour: hour
+    }
+    console.log("")
+    const ref = doc(db, `barberBookings/${barberId}/${year}-${month}/${day}`)
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      if(docSnapshot.exists()){
+        updateDoc(ref, {
+          services: arrayUnion(serviceInfo)
+        })
+      }else{
+        await setDoc(ref, {
           services: [serviceInfo]
         })
       }

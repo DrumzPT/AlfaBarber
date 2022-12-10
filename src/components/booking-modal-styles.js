@@ -86,6 +86,10 @@ export const DatePrevArea = styled.TouchableOpacity`
   align-items: flex-end;
 `
 
+export const DatePrevDisabledArea = styled.View`
+  flex: 1;
+`
+
 export const DateTitleArea = styled.View`
   width: 140px;
   justify-content: center;
@@ -137,4 +141,10 @@ export const TimeItem = styled.TouchableOpacity`
 
 export const TimeItemText = styled.Text`
   font-size: 16px;
+`
+
+export const NoAvailableHoursText = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
 `

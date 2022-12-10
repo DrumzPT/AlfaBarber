@@ -25,6 +25,7 @@ import {
   FinishButtonText,
   DateInfo,
   DatePrevArea,
+  DatePrevDisabledArea,
   DateTitleArea,
   DateTitle,
   DateNextArea,
@@ -34,7 +35,8 @@ import {
   DateItemNumber,
   TimeList,
   TimeItem,
-  TimeItemText
+  TimeItemText,
+  NoAvailableHoursText
 } from './booking-modal-styles'
 
 const months = [
@@ -66,7 +68,7 @@ export default ({show, setShowModal, barber, service}) => {
   const { state } = useContext(UserContext)
 
 
-  const [barberAvailability, setBarberAvailability] = useState()
+  const [isLoading, setIsLoading] = useState(false)
   const [selectedYear, setSelectedYear] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [selectedDay, setSelectedDay] = useState(0);
@@ -77,8 +79,6 @@ export default ({show, setShowModal, barber, service}) => {
   const handleFinishClick = async() => {
     if(selectedHour !== null && selectedDay !== 0 && selectedYear !== 0){
       const listOfHoursToRemove = hoursToRemove(selectedHour, barber.services[service].timeBlocks)
-      console.log("listOfHoursToRemove: ", listOfHoursToRemove)
-      console.log("tem disponibilidade: ", hasAvailableTimeForService(listOfHoursToRemove, listHours))
       
       if(hasAvailableTimeForService(listOfHoursToRemove, listHours)){
         let response = await Api.removeBarberAvailability(
@@ -86,11 +86,17 @@ export default ({show, setShowModal, barber, service}) => {
         )
         if(response.success){
           removeBookedHoursClientSide(listOfHoursToRemove)
+          await Api.setBarberReservation(barber.id, barber.services[service], state.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
           await Api.setUserReservation(state.email, barber.services[service], barber.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
-        }
-        
 
-        
+          //TODO
+          navigation.navigate('Barber', {
+            id: BarberSnapshot.id,
+            avatar: picUrl,
+            name: BarberSnapshot.data.name
+          })
+        }
+
       }else{
         alert('Não é possível reservar pois não existe tempo o suficiente disponível para a hora requisitada \n' +
           'Por favor escolha outra hora'
@@ -127,7 +133,9 @@ export default ({show, setShowModal, barber, service}) => {
 
   useEffect(()=> {
     if(selectedDay !== 0)
+      setIsLoading(true)
       getBarberAvailability()
+      setIsLoading(false)
   }, [selectedDay, selectedMonth])
 
   useEffect(()=> {
@@ -137,14 +145,17 @@ export default ({show, setShowModal, barber, service}) => {
   useEffect(()=> {
     let daysInMonth = new Date(selectedYear, selectedMonth +1, 0).getDate();
     let newListDays = [];
+    const today = new Date().setHours(0,0,0,0)
 
     for(let i=1; i<= daysInMonth; i++){
       let d = new Date(selectedYear, selectedMonth, i)
 
-      newListDays.push({
-        weekday: days[d.getDay()],
-        number: i
-      })
+      if(d > today){
+        newListDays.push({
+          weekday: days[d.getDay()],
+          number: i
+        })
+      }
     }
 
     setListDays(newListDays)
@@ -179,6 +190,12 @@ export default ({show, setShowModal, barber, service}) => {
     setShowModal(false)
   }
 
+  const showPrevDate = () => {
+    let mountDate = new Date( selectedYear, selectedMonth, 1)
+    let today = new Date()
+    return mountDate > today
+  }
+
   return(
     <Modal
       transparent={true}
@@ -210,9 +227,13 @@ export default ({show, setShowModal, barber, service}) => {
 
           <ModalItem>
             <DateInfo>
-              <DatePrevArea onPress={handleLeftDateClick}>
-                <NavPrevIcon width="35" height="35" fill="#000000"/>
-              </DatePrevArea>
+              { showPrevDate() ?
+                <DatePrevArea onPress={handleLeftDateClick}>
+                  <NavPrevIcon width="35" height="35" fill="#000000"/>
+                </DatePrevArea>
+                :
+                <DatePrevDisabledArea/>
+              }
               <DateTitleArea>
                 <DateTitle>{months[selectedMonth]} {selectedYear}</DateTitle>
               </DateTitleArea>
@@ -244,8 +265,21 @@ export default ({show, setShowModal, barber, service}) => {
             </DateList>
           </ModalItem>
           
-          {listHours.length > 0 && 
+          {listHours.length == 0 && selectedDay !== 0 && !isLoading ? 
+            <ModalItem
+              style={{
+                backgroundColor: '#ED3B0E'
+              }}
+            >
+              <NoAvailableHoursText>
+                Não existe nenhum horário disponivel para esta data
+              </NoAvailableHoursText>
+            </ModalItem>
+          : 
+            listHours.length > 0 && selectedDay !== 0 &&
             <ModalItem>
+              {console.log("listHours", listHours)}
+              {console.log("selected day", selectedDay)}
               <TimeList horizontal = {true} showsHorizontalScrollIndication={false}>
                 {listHours.map((item, key)=>(
                   <TimeItem

@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import CustomTabBar from "../components/CustomTabBar";
 import Schedule from '../screens/Schedule';
 import Profile from '../screens/Profile';
-import CutHistory from '../screens/CutHistory';
+import UserBookings from '../screens/UserBookings';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +14,7 @@ export default () => (
       headerShown: false
   }}>
     <Tab.Screen name="Schedule" component={Schedule}/>
-    <Tab.Screen name="CutHistory" component={CutHistory}/>
+    <Tab.Screen name="UserBookings" component={UserBookings}/>
     <Tab.Screen name="Profile" component={Profile}/>
   </Tab.Navigator>
 )
