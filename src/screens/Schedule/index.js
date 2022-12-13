@@ -41,7 +41,7 @@ export default () => {
       <Scroller>
         <HeaderArea>
           <HeaderTitle >
-            AGENDAMENTO
+            Agendamentos
           </HeaderTitle>
 
           <Image

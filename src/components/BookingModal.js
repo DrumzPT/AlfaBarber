@@ -1,7 +1,12 @@
 import React, {useState, useEffect, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {weekdaysSchedule} from '../const/index'
-import { hoursToRemove, hasAvailableTimeForService } from '../utils/booking-utils'
+import { 
+  hoursToRemove,
+  hasAvailableTimeForService,
+  months,
+  days 
+} from '../utils/booking-utils'
 import { UserContext } from "../contexts/UserContext";
 
 import ExpandIcon from '../assets/expand.svg' 
@@ -38,30 +43,8 @@ import {
   TimeItemText,
   NoAvailableHoursText
 } from './booking-modal-styles'
+import { Alert } from 'react-native';
 
-const months = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro'
-];
-const days = [
-  'Dom',
-  'Seg',
-  'Ter',
-  'Qua',
-  'Qui',
-  'Sex',
-  'Sab'
-]
 
 export default ({show, setShowModal, barber, service}) => {
   const navigation = useNavigation();
@@ -90,11 +73,11 @@ export default ({show, setShowModal, barber, service}) => {
           await Api.setUserReservation(state.email, barber.services[service], barber.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
 
           //TODO
-          navigation.navigate('Barber', {
-            id: BarberSnapshot.id,
-            avatar: picUrl,
-            name: BarberSnapshot.data.name
-          })
+          // navigation.navigate('Barber', {
+          //   id: BarberSnapshot.id,
+          //   avatar: picUrl,
+          //   name: BarberSnapshot.data.name
+          // })
         }
 
       }else{
@@ -102,7 +85,6 @@ export default ({show, setShowModal, barber, service}) => {
           'Por favor escolha outra hora'
         )
       }
-     
     }
   }
 
@@ -278,8 +260,6 @@ export default ({show, setShowModal, barber, service}) => {
           : 
             listHours.length > 0 && selectedDay !== 0 &&
             <ModalItem>
-              {console.log("listHours", listHours)}
-              {console.log("selected day", selectedDay)}
               <TimeList horizontal = {true} showsHorizontalScrollIndication={false}>
                 {listHours.map((item, key)=>(
                   <TimeItem

@@ -9,7 +9,7 @@ import AccountIcon from '../assets/account.svg';
 
 const TabArea = styled.View`
   height: 60px;
-  background-color: #4EADBE;
+  background-color: #0047AB;
   flex-direction: row;
 `;
 const TabItem = styled.TouchableOpacity`
@@ -33,9 +33,9 @@ export default ({ state, navigation }) => {
               <TodayIcon style={{opacity: state.index===0? 1 : 0.5}} width="24" height="24" fill="#FFFFFF"  />
               <TabText>Agendar</TabText>
             </TabItem>
-            <TabItem onPress={()=>goTo('CutHistory')}>
+            <TabItem onPress={()=>goTo('UserBookings')}>
               <ScrollIcon style={{opacity: state.index===1? 1 : 0.5}} width="24" height="24" fill="#FFFFFF"  />
-              <TabText>Histórico</TabText>
+              <TabText>Agendamentos</TabText>
             </TabItem>
             <TabItem onPress={()=>goTo('Profile')}>
               <AccountIcon style={{opacity: state.index===2? 1 : 0.5}} width="24" height="24" fill="#FFFFFF" />

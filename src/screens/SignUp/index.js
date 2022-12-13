@@ -16,6 +16,7 @@ import Api from '../../Api'
 
 import PersonIcon from '../../assets/person.svg'
 import EmailIcon from '../../assets/email.svg'
+import PhoneIcon from '../../assets/phone.svg'
 import LockIcon from '../../assets/lock.svg'
 
 import SignInput from "../../components/SignInput";
@@ -27,6 +28,7 @@ export default () => {
 
   const [nameField, setNameField] = useState('')
   const [emailField, setEmailField] = useState('')
+  const [phoneField, setPhoneField] = useState('')
   const [passwordField, setPasswordField] = useState('')
 
   const handleLoginClick = async () => {
@@ -69,11 +71,18 @@ export default () => {
         source={require("../../assets/logo.png")}
       />
       <InputArea>
-      <SignInput 
+        <SignInput 
           IconSvg={PersonIcon}
           placeHolder="Digite o seu nome"   
           value={nameField}
           onChangeText={t=>setNameField(t)}
+          isPassword={false}
+        />
+        <SignInput 
+          IconSvg={PhoneIcon}
+          placeHolder="Digite o seu número telemóvel"   
+          value={phoneField}
+          onChangeText={t=>setPhoneField(t)}
           isPassword={false}
         />
         <SignInput 

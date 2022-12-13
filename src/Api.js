@@ -159,9 +159,10 @@ export default {
       hour: hour,
       serviceName: service.name,
       servicePrice: service.price,
-      seriveTimeBlocks: service.timeBlocks,
+      serviceTimeBlocks: service.timeBlocks,
       hour: hour
     }
+    await addToListOfDays(`userBookings/${email}/${year}-${month}`, day)
     const ref = doc(db, `userBookings/${email}/${year}-${month}/${day}`)
     await getDoc(ref)
     .then(async (docSnapshot)=>{
@@ -182,10 +183,10 @@ export default {
       hour: hour,
       serviceName: service.name,
       servicePrice: service.price,
-      seriveTimeBlocks: service.timeBlocks,
+      serviceTimeBlocks: service.timeBlocks,
       hour: hour
     }
-    console.log("")
+    await addToListOfDays(`barberBookings/${barberId}/${year}-${month}`, day)
     const ref = doc(db, `barberBookings/${barberId}/${year}-${month}/${day}`)
     await getDoc(ref)
     .then(async (docSnapshot)=>{
@@ -199,7 +200,50 @@ export default {
         })
       }
     })
+  },
+  getUserBookingDays: async (email, month, year) => {
+    const ref = doc(db, `userBookings/${email}/${year}-${month}/listOfDays`);
+    let result = []
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      if(docSnapshot.exists()){
+        result = docSnapshot.data().reservationDays
+      }
+    })
+
+    return result
+  },
+  getUserBookingsByDay: async (email, month, year, day) => {
+    console.log(`userBookings/${email}/${year}-${month}/${day}`)
+    const ref = doc(db, `userBookings/${email}/${year}-${month}/${day}`);
+    let result = []
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      console.log("DocSnapShot: ", docSnapshot)
+      
+      if(docSnapshot.exists()){
+        console.log("document data", docSnapshot.data())
+        result = docSnapshot.data().services
+      }
+    })
+    return result
   }
+}
+
+const addToListOfDays = async (path, day) => {
+  const ref = doc(db, path, "listOfDays")
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      if(docSnapshot.exists()){
+        updateDoc(ref, {
+          reservationDays: arrayUnion(day)
+        })
+      }else{
+        await setDoc(doc(db, path, "listOfDays"), {
+          reservationDays: [day]
+        })
+      }
+    })
 }
 
 const isAllowedToCreateAvailableBooking = () => {

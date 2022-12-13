@@ -22,3 +22,32 @@ export const hoursToRemove = (startHour, timeBlocks) => {
 export const hasAvailableTimeForService = (arrayOfHoursToRemove, arrayOfAvailableHours) => {
   return arrayOfHoursToRemove.every(hoursToRemove => arrayOfAvailableHours.includes(hoursToRemove))
 }
+
+export const sortServicesByTime = (services) => {
+  return services.sort((a,b) => (a.hour > b.hour) ? 1 : ((b.hour > a.hour) ? -1 : 0))
+}
+
+
+export const months = [
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro'
+];
+export const days = [
+  'Dom',
+  'Seg',
+  'Ter',
+  'Qua',
+  'Qui',
+  'Sex',
+  'Sab'
+]
