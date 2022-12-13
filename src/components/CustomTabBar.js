@@ -1,10 +1,12 @@
 import React from 'react';
-import { Text } from 'react-native';
 import styled from 'styled-components/native';
 
 import ScrollIcon from '../assets/scroll.svg';
 import TodayIcon from '../assets/today.svg';
-import AccountIcon from '../assets/account.svg';
+import LogoutIcon from '../assets/logout.svg';
+
+import Api from '../Api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const TabArea = styled.View`
@@ -23,6 +25,15 @@ const TabText = styled.Text`
 
 export default ({ state, navigation }) => {
 
+  const handleLogoutClick = async () => {
+    let result = await Api.signOff()
+    if(result.success){
+      AsyncStorage.removeItem("email")
+      AsyncStorage.removeItem('password');
+      navigation.reset({routes:[{name:'SignIn'}]})
+    }
+  }
+
     const goTo = (screenName) => {
         navigation.navigate(screenName);
     }
@@ -37,9 +48,9 @@ export default ({ state, navigation }) => {
               <ScrollIcon style={{opacity: state.index===1? 1 : 0.5}} width="24" height="24" fill="#FFFFFF"  />
               <TabText>Agendamentos</TabText>
             </TabItem>
-            <TabItem onPress={()=>goTo('Profile')}>
-              <AccountIcon style={{opacity: state.index===2? 1 : 0.5}} width="24" height="24" fill="#FFFFFF" />
-              <TabText>Profile</TabText>
+            <TabItem onPress={()=>handleLogoutClick()}>
+              <LogoutIcon style={{opacity: state.index===2? 1 : 0.5}} width="24" height="24" fill="#FFFFFF" />
+              <TabText>Sair da Conta</TabText>
             </TabItem>
         </TabArea>
     );
