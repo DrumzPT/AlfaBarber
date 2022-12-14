@@ -69,7 +69,7 @@ export default ({show, setShowModal, barber, service}) => {
         )
         if(response.success){
           removeBookedHoursClientSide(listOfHoursToRemove)
-          await Api.setBarberReservation(barber.id, barber.services[service], state.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
+          await Api.setBarberReservation(barber.id, barber.services[service], state.name, selectedYear, selectedMonth+1, selectedDay, selectedHour, state.phoneNumber)
           await Api.setUserReservation(state.email, barber.services[service], barber.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
 
           //TODO
@@ -184,6 +184,7 @@ export default ({show, setShowModal, barber, service}) => {
       visible={show}
       animationType="slide"
     >
+      {console.log(state)}
       <ModalArea>
         <ModalBody>
           <CloseButton onPress={handleCloseButton}>

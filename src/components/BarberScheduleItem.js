@@ -57,9 +57,8 @@ export default (({BarberSnapshot}) => {
   }, [])
 
   const handleClick = () => {
-    navigation.navigate('Barber', {
+    navigation.navigate('BarberBookings', {
       id: BarberSnapshot.id,
-      avatar: picUrl,
       name: BarberSnapshot.data.name
     })
   }

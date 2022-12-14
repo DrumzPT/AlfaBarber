@@ -138,7 +138,6 @@ export default {
     const ref = doc(db, `barbeiros/${uid}/availableBookings/${year}-${month}-${day}`)
     await getDoc(ref)
     .then((docSnapshot)=>{
-      console.log("existe", docSnapshot.exists())
       if(docSnapshot.exists()){
         updateDoc(ref, {
           hours: arrayRemove(...hoursToRemove)
@@ -177,14 +176,15 @@ export default {
       }
     })
   },
-  setBarberReservation: async (barberId, service, clientName, year, month, day, hour) => {
+  setBarberReservation: async (barberId, service, clientName, year, month, day, hour, phoneNumber) => {
     const serviceInfo =  {
       clientName: clientName,
       hour: hour,
       serviceName: service.name,
       servicePrice: service.price,
       serviceTimeBlocks: service.timeBlocks,
-      hour: hour
+      hour: hour,
+      clientPhoneNumber: phoneNumber
     }
     await addToListOfDays(`barberBookings/${barberId}/${year}-${month}`, day)
     const ref = doc(db, `barberBookings/${barberId}/${year}-${month}/${day}`)
@@ -224,6 +224,53 @@ export default {
       if(docSnapshot.exists()){
         console.log("document data", docSnapshot.data())
         result = docSnapshot.data().services
+      }
+    })
+    return result
+  },
+  getBarberBookingDays: async (uid, month, year) => {
+    const ref = doc(db, `barberBookings/${uid}/${year}-${month}/listOfDays`);
+    let result = []
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      if(docSnapshot.exists()){
+        result = docSnapshot.data().reservationDays
+      }
+    })
+
+    return result
+  },
+  getBarberBookingsByDay: async (uid, month, year, day) => {
+    console.log(`barberBookings/${uid}/${year}-${month}/${day}`)
+    const ref = doc(db, `barberBookings/${uid}/${year}-${month}/${day}`);
+    let result = []
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      console.log("DocSnapShot: ", docSnapshot)
+      
+      if(docSnapshot.exists()){
+        console.log("document data", docSnapshot.data())
+        result = docSnapshot.data().services
+      }
+    })
+    return result
+  },
+  setUserNumber: async (email, number) => {
+    const ref = doc(db, `userNumbers/${email}`)
+    await setDoc(ref, {
+      number: number
+    })
+  },
+  getUserNumber: async (email) => {
+    const ref = doc(db, `userNumbers/${email}`)
+    let result = 0
+    await getDoc(ref)
+    .then(async (docSnapshot)=>{
+      console.log("DocSnapShot: ", docSnapshot)
+      
+      if(docSnapshot.exists()){
+        console.log("document data", docSnapshot.data())
+        result = docSnapshot.data().number
       }
     })
     return result

@@ -34,24 +34,24 @@ export default ({ state, navigation }) => {
     }
   }
 
-    const goTo = (screenName) => {
-        navigation.navigate(screenName);
-    }
+  const goTo = (screenName) => {
+    navigation.navigate(screenName);
+  }
 
-    return (
-        <TabArea>
-            <TabItem onPress={()=>goTo('Schedule')}>
-              <TodayIcon style={{opacity: state.index===0? 1 : 0.5}} width="24" height="24" fill="#FFFFFF"  />
-              <TabText>Agendar</TabText>
-            </TabItem>
-            <TabItem onPress={()=>goTo('UserBookings')}>
-              <ScrollIcon style={{opacity: state.index===1? 1 : 0.5}} width="24" height="24" fill="#FFFFFF"  />
-              <TabText>Agendamentos</TabText>
-            </TabItem>
-            <TabItem onPress={()=>handleLogoutClick()}>
-              <LogoutIcon style={{opacity: state.index===2? 1 : 0.5}} width="24" height="24" fill="#FFFFFF" />
-              <TabText>Sair da Conta</TabText>
-            </TabItem>
-        </TabArea>
-    );
+  return (
+    <TabArea>
+      <TabItem onPress={()=>goTo('Schedule')}>
+        <TodayIcon style={{opacity: state.index===0? 1 : 0.5}} width="24" height="24" fill="#FFFFFF"  />
+        <TabText>Agendar</TabText>
+      </TabItem>
+      <TabItem onPress={()=>goTo('UserBookings')}>
+        <ScrollIcon style={{opacity: state.index===1? 1 : 0.5}} width="24" height="24" fill="#FFFFFF"  />
+        <TabText>Agendamentos</TabText>
+      </TabItem>
+      <TabItem onPress={()=>handleLogoutClick()}>
+        <LogoutIcon style={{opacity: state.index===2? 1 : 0.5}} width="24" height="24" fill="#FFFFFF" />
+        <TabText>Sair da Conta</TabText>
+      </TabItem>
+    </TabArea>
+  );
 }

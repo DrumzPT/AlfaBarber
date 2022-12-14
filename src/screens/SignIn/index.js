@@ -35,6 +35,7 @@ export default () => {
         alert("Login efectuado com sucesso")
         await AsyncStorage.setItem('password', passwordField)
         await AsyncStorage.setItem('email', emailField)
+        const phoneNumber = await Api.getUserNumber(emailField)
 
         console.log("user.response")
         console.log(response.user)
@@ -43,7 +44,8 @@ export default () => {
           type: 'setName',
           payload: {
             name: response.user.displayName,
-            email: response.user.email
+            email: response.user.email,
+            phoneNumber: phoneNumber
           }
         })
 

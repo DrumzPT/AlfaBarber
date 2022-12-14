@@ -3,7 +3,6 @@ import { UserContext } from "../../contexts/UserContext";
 import { Image } from "react-native";
 import { Container, LoadingIcon } from "./styles";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAuth } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native/"
 import Api from "../../Api";
 
@@ -12,12 +11,13 @@ export default () => {
   const navigation = useNavigation();
   const { state, dispatch: userDispatch } = useContext(UserContext)
 
-  const saveUserInfoAndRedirectToDashboard = (user) => {
+  const saveUserInfoAndRedirectToDashboard = (user, phoneNumber) => {
     userDispatch({
       type: 'setName',
       payload: {
         name: user.displayName,
-        email: user.email
+        email: user.email,
+        phoneNumber: phoneNumber
       }
     })
     
@@ -28,35 +28,29 @@ export default () => {
 
   useEffect(()=>{
     const checkLoggedUser =  async() => {
-      
-      const auth = getAuth();
-      const user = auth.currentUser;
 
-      if (user) {
-        saveUserInfoAndRedirectToDashboard(user)
-      } else {
-        const email = await AsyncStorage.getItem('email');
-        const password = await AsyncStorage.getItem('password');
-        
-        if(email !== undefined && password !== undefined){
-          result = await Api.signIn(email, password)
-          if(result.success){
-            saveUserInfoAndRedirectToDashboard(result.user)
-          }else{
-            navigation.reset({
-              routes:[{name:'SignIn'}]
-            })
-            AsyncStorage.removeItem("email")
-            AsyncStorage.removeItem('password');
-          }
+      const email = await AsyncStorage.getItem('email');
+      const password = await AsyncStorage.getItem('password');
+      
+      if(email !== undefined && password !== undefined){
+        result = await Api.signIn(email, password)
+        const phoneNumber = await Api.getUserNumber(email)
+        if(result.success){
+          saveUserInfoAndRedirectToDashboard(result.user, phoneNumber)
         }else{
           navigation.reset({
             routes:[{name:'SignIn'}]
           })
+          AsyncStorage.removeItem("email")
+          AsyncStorage.removeItem('password');
         }
+      }else{
+        navigation.reset({
+          routes:[{name:'SignIn'}]
+        })
       }
     }
-    checkLoggedUser();
+    checkLoggedUser()
   }, [])
 
   return (

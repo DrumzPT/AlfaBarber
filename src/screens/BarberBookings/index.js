@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Api from '../../Api';
 import { Container } from './styles'
+import { useRoute} from "@react-navigation/native"
 
 import NavPrevIcon from '../../assets/nav_prev.svg'
 import NavNextIcon from '../../assets/nav_next.svg'
 
 import {months, days, sortServicesByTime} from '../../utils/booking-utils'
-
-import { UserContext } from '../../contexts/UserContext';
 
 import {
   HeaderArea,
@@ -31,10 +30,14 @@ import {
   ServiceDetails,
   ServiceTime,
   HourText,
-  HourTime
+  HourTime,
+  ClientPhoneInfo,
+  ClientPhone
 } from './styles'
 
 export default () => {
+
+  const route = useRoute();
 
   const [selectedYear, setSelectedYear] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState(0);
@@ -43,11 +46,9 @@ export default () => {
   const [listOfBookedDays, setListOfBookedDays] = useState([])
   const [listOfServices, setListOfServices] = useState([])
 
-  const { state } = useContext(UserContext)
-
-  const getUserBooking = async () => {
-    console.log("Get user booking")
-    const result = await Api.getUserBookingDays(state.email, selectedMonth + 1, selectedYear)
+  const getBarberBooking = async () => {
+    console.log("Get BarberBookings")
+    const result = await Api.getBarberBookingDays(route.params.id, selectedMonth + 1, selectedYear)
     console.log("result: ", result)
     setListOfBookedDays(result)
   }
@@ -76,7 +77,7 @@ export default () => {
 
   const handleSelectDay = async (day) => {
     setSelectedDay(day)
-    const result = await Api.getUserBookingsByDay(state.email, selectedMonth + 1, selectedYear, day)
+    const result = await Api.getBarberBookingsByDay(route.params.id, selectedMonth + 1, selectedYear, day)
     const sortedServices= sortServicesByTime(result)
     setListOfServices(sortedServices)
   }
@@ -102,7 +103,7 @@ export default () => {
     setSelectedDay(0);
 
     if(selectedYear !== 0)
-      getUserBooking()
+      getBarberBooking()
     
   }, [selectedMonth, selectedYear])
 
@@ -116,7 +117,7 @@ export default () => {
     <Container>
       <HeaderArea>
         <HeaderTitle >
-          Lista de Agendamentos
+          Lista de Agendamentos para {`${route.params.name}`}
         </HeaderTitle>
       </HeaderArea>
       <Body>
@@ -181,9 +182,13 @@ export default () => {
           <BookingItem key={key}>
           {console.log("item",item)}
             <BarberInfo>
-              <BarberName>Barbeiro: </BarberName>
-              <BarberName>{item.barberName}</BarberName>
+              <BarberName>Cliente: </BarberName>
+              <BarberName>{item.clientName}</BarberName>
             </BarberInfo>
+            <ClientPhoneInfo>
+              <ClientPhone>Telemóvel: </ClientPhone>
+              <ClientPhone>{item.clientPhoneNumber}</ClientPhone>
+            </ClientPhoneInfo>
             <ServiceInfo>
               <ServiceDetails>Serviço: {item.serviceName}</ServiceDetails>
               <ServiceDetails>Preço: {item.servicePrice} €</ServiceDetails>

@@ -37,6 +37,7 @@ export default () => {
       if(response.success){
         alert("Registo efectuado com sucesso")
         await Api.updateUser(nameField)
+        await Api.setUserNumber(emailField, phoneField)
         await AsyncStorage.setItem('password', passwordField)
         await AsyncStorage.setItem('email', emailField)
 
@@ -44,7 +45,8 @@ export default () => {
           type: 'setName',
           payload: {
             name: nameField,
-            email: emailField
+            email: emailField,
+            phoneNumber: phoneField
           }
         })
 
