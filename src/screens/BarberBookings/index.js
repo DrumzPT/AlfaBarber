@@ -180,7 +180,6 @@ export default () => {
         { listOfServices.length !== 0 && 
           listOfServices.map((item, key) => (
           <BookingItem key={key}>
-          {console.log("item",item)}
             <BarberInfo>
               <BarberName>Cliente: </BarberName>
               <BarberName>{item.clientName}</BarberName>
