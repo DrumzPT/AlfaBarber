@@ -1,15 +1,15 @@
 import React, {useState, useEffect, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {weekdaysSchedule} from '../const/index'
-import { 
+import {
   hoursToRemove,
   hasAvailableTimeForService,
   months,
-  days 
+  days
 } from '../utils/booking-utils'
 import { UserContext } from "../contexts/UserContext";
 
-import ExpandIcon from '../assets/expand.svg' 
+import ExpandIcon from '../assets/expand.svg'
 import NavPrevIcon from '../assets/nav_prev.svg'
 import NavNextIcon from '../assets/nav_next.svg'
 import Api from '../Api';
@@ -43,6 +43,7 @@ import {
   TimeItemText,
   NoAvailableHoursText
 } from './booking-modal-styles'
+import ApiResponseContainer from './ApiResponseContainer';
 import { Alert } from 'react-native';
 
 
@@ -57,21 +58,37 @@ export default ({show, setShowModal, barber, service}) => {
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedHour, setSelectedHour] = useState(null);
   const [listDays, setListDays] = useState([]);
-  const [listHours, setListHours] = useState([])
+  const [listHours, setListHours] = useState([]);
+  const [renderReservationMessage, setRenderReservationMessage] = useState(false);
+  const [reservationMessageData, setReservationMessageData]  = useState("");
+  const [apiError, setApiError] = useState(false);
 
   const handleFinishClick = async() => {
     if(selectedHour !== null && selectedDay !== 0 && selectedYear !== 0){
       const listOfHoursToRemove = hoursToRemove(selectedHour, barber.services[service].timeBlocks)
-      
+
       if(hasAvailableTimeForService(listOfHoursToRemove, listHours)){
         let response = await Api.removeBarberAvailability(
           barber.id, selectedYear,selectedMonth +1, selectedDay, listOfHoursToRemove
         )
         if(response.success){
           removeBookedHoursClientSide(listOfHoursToRemove)
-          await Api.setBarberReservation(barber.id, barber.services[service], state.name, selectedYear, selectedMonth+1, selectedDay, selectedHour, state.phoneNumber)
-          await Api.setUserReservation(state.email, barber.services[service], barber.name, selectedYear, selectedMonth+1, selectedDay, selectedHour)
+          let tmpSelectedHour = selectedHour;
+          setSelectedHour(null);
+          setApiError(false);
+          setRenderReservationMessage(true);
+          setReservationMessageData("A efectuar a sua reserva")
 
+          let responseSBR = await Api.setBarberReservation(barber.id, barber.services[service], state.name, selectedYear, selectedMonth+1, selectedDay, tmpSelectedHour, state.phoneNumber)
+          let responseSUR = await Api.setUserReservation(state.email, barber.services[service], barber.name, selectedYear, selectedMonth+1, selectedDay, tmpSelectedHour)
+
+          let operationCompleted = responseSBR.success && responseSUR.success
+
+          operationCompleted ? setReservationMessageData("A sua reserva foi efetuada com sucesso") : setReservationMessageData("Ocorreu um erro por favor tente de novo");
+
+          setTimeout(
+            () =>  {setRenderReservationMessage(false);}
+            , 4000);
           //TODO
           // navigation.navigate('Barber', {
           //   id: BarberSnapshot.id,
@@ -81,11 +98,18 @@ export default ({show, setShowModal, barber, service}) => {
         }
 
       }else{
-        alert('Não é possível reservar pois não existe tempo o suficiente disponível para a hora requisitada \n' +
-          'Por favor escolha outra hora'
-        )
+        handleApiResponse(true, 'Não existe disponibilidade para a duração da sua reserva\n' + 'Por favor escolha outra hora')
       }
     }
+  }
+
+  const handleApiResponse = (isError, message) => {
+    setApiError(isError);
+    setRenderReservationMessage(true);
+    setReservationMessageData(message)
+    setTimeout(
+      () =>  {setRenderReservationMessage(false);}
+      , 5000);
   }
 
   const removeBookedHoursClientSide = (listOfHoursToRemove) => {
@@ -101,7 +125,7 @@ export default ({show, setShowModal, barber, service}) => {
     let selDate = year+'-'+month+'-'+day;
 
     let response = await Api.getBarberAvailability(barber.id, selDate)
-    
+
     if(response.success){
       if(response.result === "created"){
         setListHours(weekdaysSchedule)
@@ -109,7 +133,7 @@ export default ({show, setShowModal, barber, service}) => {
         setListHours(response.result.data().hours)
       }
     }else{
-      alert("Ocorreu um erro ao obter horas disponíveis, por favor tente mais tarde e caso o erro persista contacte-nos")
+      handleApiResponse(true, "Ocorreu um erro ao obter horas disponíveis, por favor tente mais tarde e caso o erro persista contacte-nos");
     }
   }
 
@@ -143,7 +167,7 @@ export default ({show, setShowModal, barber, service}) => {
     setListDays(newListDays)
     setSelectedDay(0);
     setListHours([]);
-    setSelectedHour(0);
+    setSelectedHour(null);
   }, [selectedMonth, selectedYear])
 
   useEffect(()=> {
@@ -151,7 +175,7 @@ export default ({show, setShowModal, barber, service}) => {
     setSelectedYear ( today.getFullYear());
     setSelectedMonth ( today.getMonth() );
   }, [])
-  
+
   const handleLeftDateClick = () => {
     let mountDate = new Date( selectedYear, selectedMonth, 1)
     mountDate.setMonth(mountDate.getMonth() -1)
@@ -184,7 +208,6 @@ export default ({show, setShowModal, barber, service}) => {
       visible={show}
       animationType="slide"
     >
-      {console.log(state)}
       <ModalArea>
         <ModalBody>
           <CloseButton onPress={handleCloseButton}>
@@ -198,12 +221,16 @@ export default ({show, setShowModal, barber, service}) => {
               </BarberName>
             </BarberInfo>
           </ModalItem>
-          
+
           {service != null &&
             <ModalItem>
               <ServiceInfo>
                 <ServiceName>{barber.services[service].name}</ServiceName>
                 <ServicePrice>{barber.services[service].price}€</ServicePrice>
+              </ServiceInfo>
+              <ServiceInfo>
+                <ServiceName>Duração: </ServiceName>
+                <ServicePrice>{30 * barber.services[service].timeBlocks} minutos</ServicePrice>
               </ServiceInfo>
             </ModalItem>
           }
@@ -226,7 +253,7 @@ export default ({show, setShowModal, barber, service}) => {
             </DateInfo>
             <DateList horizontal={true} showsHorizontalScrollIndication={false}>
               {listDays.map((item, key)=>(
-                <DateItem 
+                <DateItem
                   key={key}
                   onPress={()=>{setSelectedDay(item.number)}}
                   style={{
@@ -247,8 +274,8 @@ export default ({show, setShowModal, barber, service}) => {
               ))}
             </DateList>
           </ModalItem>
-          
-          {listHours.length == 0 && selectedDay !== 0 && !isLoading ? 
+
+          {listHours.length == 0 && selectedDay !== 0 && !isLoading ?
             <ModalItem
               style={{
                 backgroundColor: '#ED3B0E'
@@ -258,7 +285,7 @@ export default ({show, setShowModal, barber, service}) => {
                 Não existe nenhum horário disponivel para esta data
               </NoAvailableHoursText>
             </ModalItem>
-          : 
+          :
             listHours.length > 0 && selectedDay !== 0 &&
             <ModalItem>
               <TimeList horizontal = {true} showsHorizontalScrollIndication={false}>
@@ -281,11 +308,19 @@ export default ({show, setShowModal, barber, service}) => {
               </TimeList>
             </ModalItem>
           }
-          <FinishButton onPress={handleFinishClick}>
-            <FinishButtonText>
-              Finalizar Agendamento
-            </FinishButtonText>
-          </FinishButton>
+          { renderReservationMessage &&
+            <ApiResponseContainer
+              message={reservationMessageData}
+              isError={apiError}
+            />
+          }
+          { selectedHour !== null &&
+            <FinishButton onPress={handleFinishClick}>
+              <FinishButtonText>
+                Finalizar Agendamento
+              </FinishButtonText>
+            </FinishButton>
+          }
         </ModalBody>
       </ModalArea>
     </Modal>

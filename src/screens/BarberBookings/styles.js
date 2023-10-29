@@ -33,6 +33,13 @@ export const HeaderTitle = styled.Text`
   margin-bottom: 20px;
   color: #ffffff;
 `
+export const BackButton = styled.TouchableOpacity`
+  position: absolute;
+  left: 0px;
+  top: 30px;
+  z-index: 9;
+  background-color: #4EADBE;
+`
 
 export const DateInfo = styled.View`
   flex-direction: row ;

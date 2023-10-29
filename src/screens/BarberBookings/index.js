@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Api from '../../Api';
 import { Container } from './styles'
-import { useRoute} from "@react-navigation/native"
+import { useRoute, useNavigation} from "@react-navigation/native"
 
 import NavPrevIcon from '../../assets/nav_prev.svg'
 import NavNextIcon from '../../assets/nav_next.svg'
+import BackIcon from '../../assets/back.svg'
 
 import {months, days, sortServicesByTime} from '../../utils/booking-utils'
 
@@ -32,11 +33,12 @@ import {
   HourText,
   HourTime,
   ClientPhoneInfo,
-  ClientPhone
+  ClientPhone,
+  BackButton
 } from './styles'
 
 export default () => {
-
+  const navigation = useNavigation();
   const route = useRoute();
 
   const [selectedYear, setSelectedYear] = useState(0);
@@ -106,6 +108,10 @@ export default () => {
       getBarberBooking()
     
   }, [selectedMonth, selectedYear])
+
+  const handleBackButton = () => {
+    navigation.goBack()
+  }
 
   useEffect(()=> {
     let today = new Date();
@@ -199,7 +205,9 @@ export default () => {
           </BookingItem>
           ))
         }
-        
+      <BackButton onPress={handleBackButton}>
+        <BackIcon width="44" height="44" fill="#FFFFFF" />
+      </BackButton>
       </Body>
     </Container>
   )

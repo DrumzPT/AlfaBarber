@@ -1,4 +1,4 @@
-import { 
+import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -7,14 +7,14 @@ import {
 } from "firebase/auth";
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from "firebase/firestore";
-import { 
+import {
   collection,
-  getDocs, 
-  getDoc, 
-  doc, 
-  setDoc, 
+  getDocs,
+  getDoc,
+  doc,
+  setDoc,
   arrayUnion,
-  arrayRemove, 
+  arrayRemove,
   updateDoc
 } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
@@ -125,7 +125,7 @@ export default {
           response = {success: true, result: "created"}
         }
       }
-      
+
     })
     .catch((error)=>{
       response = {success: false, errorMessage: error}
@@ -161,6 +161,7 @@ export default {
       serviceTimeBlocks: service.timeBlocks,
       hour: hour
     }
+    let response;
     await addToListOfDays(`userBookings/${email}/${year}-${month}`, day)
     const ref = doc(db, `userBookings/${email}/${year}-${month}/${day}`)
     await getDoc(ref)
@@ -174,7 +175,12 @@ export default {
           services: [serviceInfo]
         })
       }
+      response = {success: true}
     })
+    .catch((error)=>{
+      response = {success: false, errorMessage: error}
+    })
+    return response;
   },
   setBarberReservation: async (barberId, service, clientName, year, month, day, hour, phoneNumber) => {
     const serviceInfo =  {
@@ -186,6 +192,7 @@ export default {
       hour: hour,
       clientPhoneNumber: phoneNumber
     }
+    let response;
     await addToListOfDays(`barberBookings/${barberId}/${year}-${month}`, day)
     const ref = doc(db, `barberBookings/${barberId}/${year}-${month}/${day}`)
     await getDoc(ref)
@@ -199,7 +206,12 @@ export default {
           services: [serviceInfo]
         })
       }
+      response = {success: true}
     })
+    .catch((error)=>{
+      response = {success: false, errorMessage: error}
+    })
+    return response;
   },
   getUserBookingDays: async (email, month, year) => {
     const ref = doc(db, `userBookings/${email}/${year}-${month}/listOfDays`);
@@ -220,7 +232,7 @@ export default {
     await getDoc(ref)
     .then(async (docSnapshot)=>{
       console.log("DocSnapShot: ", docSnapshot)
-      
+
       if(docSnapshot.exists()){
         console.log("document data", docSnapshot.data())
         result = docSnapshot.data().services
@@ -247,7 +259,7 @@ export default {
     await getDoc(ref)
     .then(async (docSnapshot)=>{
       console.log("DocSnapShot: ", docSnapshot)
-      
+
       if(docSnapshot.exists()){
         console.log("document data", docSnapshot.data())
         result = docSnapshot.data().services
@@ -267,7 +279,7 @@ export default {
     await getDoc(ref)
     .then(async (docSnapshot)=>{
       console.log("DocSnapShot: ", docSnapshot)
-      
+
       if(docSnapshot.exists()){
         console.log("document data", docSnapshot.data())
         result = docSnapshot.data().number

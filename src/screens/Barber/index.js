@@ -86,18 +86,18 @@ export default () => {
           <ServicesArea>
             <ServicesTitle>Lista de Serviços</ServicesTitle>
             {barberInfo.services
-              .filter(item => item.providers.length === 0 || item.providers.includes(barberInfo.name))
               .map((item, key)=>(
-              <ServiceItem key={key}>
-                <ServiceInfo>
-                  <ServiceName>{item.name}</ServiceName>
-                  <ServicePrice>{item.price}€</ServicePrice>
-                  <ServiceTime>Duração: {30*item.timeBlocks} minutos</ServiceTime>
-                </ServiceInfo>
-                <ServiceChooseButton onPress={()=> handleServiceChoose(item, key)}>
-                  <ServiceChooseBtnText>Agendar</ServiceChooseBtnText>
-                </ServiceChooseButton>
-              </ServiceItem>
+                (item.providers.length === 0 || item.providers.includes(barberInfo.name)) && (
+                <ServiceItem key={key}>
+                  <ServiceInfo>
+                    <ServiceName>{item.name}</ServiceName>
+                    <ServicePrice>{item.price}€</ServicePrice>
+                    <ServiceTime>Duração: {30*item.timeBlocks} minutos</ServiceTime>
+                  </ServiceInfo>
+                  <ServiceChooseButton onPress={()=> handleServiceChoose(item, key)}>
+                    <ServiceChooseBtnText>Agendar</ServiceChooseBtnText>
+                  </ServiceChooseButton>
+                </ServiceItem>)
             ))}
           </ServicesArea>
         </PageBody>

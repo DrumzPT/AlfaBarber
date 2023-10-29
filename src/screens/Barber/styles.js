@@ -56,6 +56,7 @@ export const BackButton = styled.TouchableOpacity`
   left: 0px;
   top: 30px;
   z-index: 9;
+  background-color: #4EADBE;
 `
 export const ServicesArea = styled.View`
   margin-top: 30px;
